@@ -33,6 +33,9 @@ module Pronto
       context 'only global excludes in file' do
         before do
           File.should_receive(:exist?)
+            .and_return(false)
+
+          File.should_receive(:exist?)
             .and_return(true)
 
           YAML.should_receive(:load_file)
@@ -48,8 +51,40 @@ module Pronto
         end
       end
 
+      context 'custom config file' do
+        let(:path) { '/tmp/pronto.yml' }
+
+        before do
+          ENV.should_receive(:[])
+            .with('PRONTO_CONFIG').twice
+            .and_return(path)
+
+          File.should_receive(:exist?)
+            .with(path)
+            .and_return(true)
+
+          File.should_receive(:exist?)
+            .and_return(true)
+
+          YAML.should_receive(:load_file)
+            .with(path)
+            .and_return('all' => { 'exclude' => ['a/**/*.rb'] })
+        end
+
+        it do
+          should include(
+            'all' => {
+              'exclude' => ['a/**/*.rb'], 'include' => []
+            }
+          )
+        end
+      end
+
       context 'a value is set to false' do
         before do
+          File.should_receive(:exist?)
+            .and_return(false)
+
           File.should_receive(:exist?)
             .and_return(true)
 
