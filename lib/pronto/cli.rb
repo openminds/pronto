@@ -14,6 +14,11 @@ module Pronto
 
     desc 'run [PATH]', 'Run Pronto'
 
+    method_option :config,
+                  type: :string,
+                  default: '.pronto.yml',
+                  desc: 'Uses the specified cofnig file.'
+
     method_option :'exit-code',
                   type: :boolean,
                   desc: 'Exits with non-zero code if there were any warnings/errors.'
@@ -47,7 +52,7 @@ module Pronto
 
     def run(path = '.')
       path = File.expand_path(path)
-
+      ENV['PRONTO_CONFIG'] ||= options[:config]
       gem_names = options[:runner].any? ? options[:runner] : ::Pronto::GemNames.new.to_a
       gem_names.each do |gem_name|
         require "pronto/#{gem_name}"
