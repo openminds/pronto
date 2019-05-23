@@ -36,7 +36,7 @@ module Pronto
       'format' => DEFAULT_MESSAGE_FORMAT
     }.freeze
 
-    def initialize(path = '.pronto.yml')
+    def initialize(path = '/bundle/pronto.yml')
       @path = path
     end
 
